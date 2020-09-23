@@ -1,17 +1,15 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  - name: nginx-pod
+  name: nginx-pod
 spec:
   containers:
   - name: nginx-container
     image: nginx:latest
     ports:
-      - containerPort: 80
+      - containerPort: 8001
         protocol: TCP
   - name: ubt
     image: ubuntu:18.04
     command: ["tail"]
     args: ["-f", "/dev/null"]
-      
-  
