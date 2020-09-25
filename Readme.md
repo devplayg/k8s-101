@@ -1,5 +1,31 @@
 # k8s  
 
+ Create
+
+    kubectl apply -f nginx-pod.yaml
+
+Delete
+
+    kubectl delete -f webpod.yaml
+
+Connect
+
+    kubectl exec -it webpod -c go bash
+    kubectl exec -it nginx-pod bash
+
+List
+
+    kubectl get pods
+
+Log
+
+    kubectl logs webpod go
+    kubectl logs webpod srv
+    kubectl logs webpod web
+
+
+nginx-pod.yaml
+
     apiVersion: v1
     kind: Pod
     metadata:
@@ -19,15 +45,3 @@
         image: golang:latest
         command: ["tail"]
         args: ["-f", "/dev/null"]
-
-
-
-
-    kubectl delete pods webpod
-    kubectl delete webpod
-    kubectl describe
-    kubectl describe pod webpod
-    kubectl describe pod webpod > kube.txt
-    kubectl describe pod/nginx-pod -n default
-    kubectl describe pods nginx-pod
-    kubectl describe pods nginx-pod2
