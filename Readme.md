@@ -7,6 +7,7 @@
 Delete
 
     kubectl delete -f webpod.yaml
+    kubectl delete pods webpod
 
 Connect
 
