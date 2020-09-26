@@ -1,6 +1,8 @@
 # k8s  
 
- Create
+https://kubernetes.io/ko/docs/reference/kubectl/cheatsheet/
+
+Create
 
     kubectl apply -f nginx-pod.yaml
 
