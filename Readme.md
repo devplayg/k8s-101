@@ -19,6 +19,7 @@ Connect
 List
 
     kubectl get pods
+    kubectl get po
 
 Log
 
