@@ -2,51 +2,46 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
 	"net/http"
-	"net/http/httputil"
 	"os"
 	"os/signal"
-	"strings"
+	"sync/atomic"
 	"time"
 )
+
+var count int64 = 0
+
+type response struct {
+	Count int64 `json:"count"`
+}
+
+func newResponse(count int64)  *response{
+	return &response{Count: count}
+}
 
 func main() {
 	// Flag
 	port := flag.String("p", "80", "Port")
 	flag.Parse()
-
-	// API list
-	apiList := []string{
-            "/api1",
-            "/api2",
-            "/api3",    
-	}
-	startHttpServer(*port, apiList)
+	startHttpServer(*port)
 }
 
 // handles common request
-func commonHandler(w http.ResponseWriter, r *http.Request) {
-	debugHttpRequest(r)
+func visitHandler(w http.ResponseWriter, r *http.Request) {
+	c := atomic.AddInt64(&count, 1)
 	w.WriteHeader(http.StatusOK)
-}
+	b, _ := json.Marshal(newResponse(c))
 
-// Debug HTTP request
-func debugHttpRequest(r *http.Request) {
-	fmt.Printf("%s\n", strings.Repeat("=", 100))
-	b, err := httputil.DumpRequest(r, true)
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Printf("%s\n", b)
+	w.Write(b)
 }
 
 // starts http server
-func startHttpServer(port string, apiList []string) {
-	srv := createHttpServer(port, apiList)
+func startHttpServer(port string) {
+	srv := createHttpServer(port)
 	ch := make(chan struct{})
 	go func() {
 		defer close(ch)
@@ -68,13 +63,10 @@ func startHttpServer(port string, apiList []string) {
 }
 
 // creates HTTP server
-func createHttpServer(port string, apiList []string) *http.Server {
+func createHttpServer(port string) *http.Server {
 	//r := mux.NewRouter()
 	r := http.NewServeMux()
-	for _, api := range apiList {
-		r.HandleFunc(api, commonHandler)
-		fmt.Printf("[api] %s\n", api)
-	}
+	r.HandleFunc("/", visitHandler)
 	srv := &http.Server{
 		Handler:      r,
 		Addr:         ":" + port,
@@ -83,5 +75,4 @@ func createHttpServer(port string, apiList []string) *http.Server {
 	}
 	fmt.Printf("server listening on %s\n", srv.Addr)
 	return srv
-
 }
