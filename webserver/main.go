@@ -16,11 +16,12 @@ import (
 var count int64 = 0
 
 type response struct {
-	Count int64 `json:"count"`
+	Count      int64  `json:"count"`
+	RemoteAddr string `json:"ip"`
 }
 
-func newResponse(count int64)  *response{
-	return &response{Count: count}
+func newResponse(count int64, ip string) *response {
+	return &response{count, ip}
 }
 
 func main() {
@@ -34,7 +35,8 @@ func main() {
 func visitHandler(w http.ResponseWriter, r *http.Request) {
 	c := atomic.AddInt64(&count, 1)
 	w.WriteHeader(http.StatusOK)
-	b, _ := json.Marshal(newResponse(c))
+
+	b, _ := json.Marshal(newResponse(c, r.RemoteAddr))
 
 	w.Write(b)
 }
