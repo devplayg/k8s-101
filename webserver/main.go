@@ -33,11 +33,10 @@ func main() {
 
 // handles common request
 func visitHandler(w http.ResponseWriter, r *http.Request) {
-	c := atomic.AddInt64(&count, 1)
+	count := atomic.AddInt64(&count, 1)
 	w.WriteHeader(http.StatusOK)
-
-	b, _ := json.Marshal(newResponse(c, r.RemoteAddr))
-
+	b, _ := json.Marshal(newResponse(count, r.RemoteAddr))
+	log.Printf("%s - %d\n", r.RemoteAddr, count)
 	w.Write(b)
 }
 
