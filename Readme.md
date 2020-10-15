@@ -49,3 +49,55 @@ nginx-pod.yaml
         image: golang:latest
         command: ["tail"]
         args: ["-f", "/dev/null"]
+
+
+
+### Replicaset
+
+kube.yaml
+    
+    apiVersion: apps/v1
+    kind: ReplicaSet
+    metadata:
+        name: replicaset-was
+    spec:
+        replicas: 3
+        selector:
+            matchLabels:
+                app: app-was
+        template:
+            metadata:
+                name: tpl-was
+                labels:
+                    app: app-was
+            spec:
+                containers:
+                - name: was
+                  image: devplayg/webcounter:latest
+                  ports:
+                  - containerPort: 80
+                  
+Create
+
+    $ kubectl apply -f kube.yaml
+    
+    $ kubectl get po
+    NAME                   READY   STATUS    RESTARTS   AGE
+    replicaset-was-6bxhn   1/1     Running   0          57s
+    replicaset-was-cz5f7   1/1     Running   0          57s
+    replicaset-was-nbt2j   1/1     Running   0          57s
+    
+    $ kubectl get po --show-labels
+    NAME                   READY   STATUS    RESTARTS   AGE   LABELS
+    replicaset-was-6bxhn   1/1     Running   0          60s   app=app-was
+    replicaset-was-cz5f7   1/1     Running   0          60s   app=app-was
+    replicaset-was-nbt2j   1/1     Running   0          60s   app=app-was
+    
+    $kubectl get rs
+    NAME             DESIRED   CURRENT   READY   AGE
+    replicaset-was   3         3         3       3m20s
+
+
+Delete
+
+     kubectl delete rs replicaset-was
