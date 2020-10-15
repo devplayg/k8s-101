@@ -101,3 +101,8 @@ Create
 Delete
 
      kubectl delete rs replicaset-was
+     
+     
+Edit
+
+    kubectl edit pods meta-was-jx27p
